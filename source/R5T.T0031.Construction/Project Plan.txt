@@ -1,4 +1,23 @@
 R5T.T0031.Construction - A construction console-app for the library R5T.T0031.
 
-Goals
+Type abstractions:
+
+* R5T.T0031.Abstractions - IContext and GetSubContext<TSubContext, TContext> extensions.
+* R5T.T0031.T001.Abstractions - IDirectoryPathContext.
+
+
+Types:
+
+* R5T.T0031 - ContextBase and InitialContext classes.
+* R5T.T0031.T001 - DirectoryPathContext.
+
+
+Type extensions:
+
+* R5T.T0031.X001 - IContext DI-related extensions.
+* R5T.T0031.X002 - IContext IOperation-related extensions. I don't like definining IOperations just for use with IContexts. Make sure you are just choosing a service, and creating and IContext extension for it.
+
+* R5T.T0031.T001.X001 - IDirectoryPathContext path-related extensions using R5T.Gepidia.IFileSystemOperator and R5T.Lombardy.IStringlyTypedPathOperator services.
+* R5T.T0031.T001.X002 - BAD: IDirectoryPathContext path-related extensions using IOperations using R5T.Gepidia.IFileSystemOperator and R5T.Lombardy.IStringlyTypedPathOperator services. I don't like this extra work since eventually, it all goes to the same IDirectoryPathContext extension methods.
+
 

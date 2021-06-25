@@ -1,0 +1,4 @@
+R5T.T0031.T001.Abstractions - IDirectoryPathContext extensions based on path-related IOperations.
+
+Goals
+
