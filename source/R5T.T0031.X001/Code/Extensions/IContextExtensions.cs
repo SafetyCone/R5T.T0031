@@ -16,6 +16,33 @@ namespace System
             return service;
         }
 
+        public static void Run<TContext, TService>(this TContext context,
+            Action<TService> serviceAction)
+            where TContext : IContext
+        {
+            var service = context.GetRequiredService<TService>();
+
+            serviceAction(service);
+        }
+
+        public static Task Run<TContext, TService>(this TContext context,
+            Func<TService, Task> serviceAction)
+            where TContext : IContext
+        {
+            var service = context.GetRequiredService<TService>();
+
+            return serviceAction(service);
+        }
+
+        public static Task<TOutput> Run<TContext, TService, TOutput>(this TContext context,
+            Func<TService, Task<TOutput>> serviceFunction)
+            where TContext : IContext
+        {
+            var service = context.GetRequiredService<TService>();
+
+            return serviceFunction(service);
+        }
+
         public static Task WithService<TService>(this IContext context, Func<TService, Task> action)
         {
             var service = context.GetRequiredService<TService>();

@@ -6,6 +6,33 @@ namespace R5T.T0031
 {
     public static class IContextExtensions
     {
+        public static async Task<TParentContext> InContext<TContext, TParentContext>(this TParentContext parentContext,
+            ContextConstructorInitializer<TContext, TParentContext> contextConstructorInitializer,
+            Func<TContext, Task> contextAction = default)
+            where TContext : IContext
+            where TParentContext : IContext
+        {
+            var context = await contextConstructorInitializer(parentContext);
+
+            if(contextAction is object)
+            {
+                await contextAction(context);
+            }
+
+            return parentContext;
+        }
+
+        public static async Task<TParentContext> InContext<TContext, TParentContext>(this Task<TParentContext> gettingParentContext,
+            ContextConstructorInitializer<TContext, TParentContext> contextConstructorInitializer,
+            Func<TContext, Task> contextAction = default)
+            where TContext : IContext
+            where TParentContext : IContext
+        {
+            var parentContext = await gettingParentContext;
+
+            return await parentContext.InContext(contextConstructorInitializer, contextAction);
+        }
+
         public static TContext GetContext<TContext, TParentContext>(this TParentContext parentContext,
             ContextConstructor<TContext> contextConstructor)
             where TContext : IContext
@@ -57,32 +84,6 @@ namespace R5T.T0031
             var context = await gettingContext;
 
             return await context.InContext(action);
-        }
-
-        public static async Task<TParentContext> InContext<TContext, TParentContext>(this TParentContext parentContext,
-            ContextConstructorInitializer<TContext, TParentContext> contextConstructorInitializer,
-            Func<TContext, Task> action)
-            where TContext : IContext
-            where TParentContext : IContext
-        {
-            var context = await contextConstructorInitializer(parentContext);
-
-            await action(context);
-
-            return parentContext;
-        }
-
-        public static async Task<TParentContext> InContext<TContext, TParentContext>(this Task<TParentContext> gettingParentContext,
-            ContextConstructorInitializer<TContext, TParentContext> contextConstructorInitializer,
-            Func<TContext, Task> action)
-            where TContext : IContext
-            where TParentContext : IContext
-        {
-            var parentContext = await gettingParentContext;
-
-            return await parentContext.InContext(
-                contextConstructorInitializer,
-                action);
         }
 
         public static Task<TOut> FromContext<TContext, TOut>(this TContext context,

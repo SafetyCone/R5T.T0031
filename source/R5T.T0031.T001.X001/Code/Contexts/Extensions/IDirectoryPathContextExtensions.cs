@@ -5,6 +5,39 @@ using R5T.Gepidia;
 using R5T.Lombardy;
 
 
+namespace System
+{
+    using R5T.T0031.T001;
+
+
+    public static partial class IDirectoryPathContextExtensions
+    {
+        public static Task<TDirectoryPathContext> CreateDirectory<TDirectoryPathContext>(this TDirectoryPathContext directoryPathContext)
+            where TDirectoryPathContext : IDirectoryPathContext
+        {
+            directoryPathContext.Run<TDirectoryPathContext, IFileSystemOperator>(fileSystemOperator =>
+            {
+                fileSystemOperator.CreateDirectory(directoryPathContext.DirectoryPath);
+            });
+
+            return Task.FromResult(directoryPathContext);
+        }
+
+        public static Task<DirectoryPathContext> InSubDirectoryPathContext(this DirectoryPathContext directoryPathContext,
+            string subDirectoryRelativePath,
+            Func<DirectoryPathContext, Task> subDirectoryPathContextAction)
+        {
+            var subDirectoryPath = directoryPathContext.ServiceProvider.RunFunc<IStringlyTypedPathOperator, string>(stringlyTypedPathOpertor =>
+            {
+                var output = stringlyTypedPathOpertor.GetDirectoryPath(directoryPathContext.DirectoryPath, subDirectoryRelativePath);
+                return output;
+            });
+
+            return directoryPathContext.InDirectoryPathContext(subDirectoryPath, subDirectoryPathContextAction);
+        }
+    }
+}
+
 namespace R5T.T0031.T001.X001
 {
     public static partial class IDirectoryPathContextExtensions
