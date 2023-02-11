@@ -12,7 +12,7 @@ namespace System
     public static class IContextExtensions
     {
         public static Task Run<TOperation>(this IContext context)
-            where TOperation : IOperation
+            where TOperation : IActionOperation
         {
             var operation = context.ServiceProvider.GetRequiredService<TOperation>();
 
